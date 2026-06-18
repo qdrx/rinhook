@@ -345,7 +345,8 @@ mod test {
 
     #[test]
     fn test_reversible_uinput() {
-        for code in 0..u16::MAX {
+        // Linux KEY_MAX is 0x2ff — transmuting values above it is UB in Rust 2024.
+        for code in 0..0x300u16 {
             let ukey = unsafe { std::mem::transmute::<u16, UKey>(code) };
             let key = key_from_ukey(ukey);
             if let Some(ukey2) = ukey_from_key(key) {
