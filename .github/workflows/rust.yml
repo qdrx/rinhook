@@ -23,11 +23,12 @@ jobs:
           dependencies: sudo apt-get update -qq && sudo apt-get install -y libxtst-dev libevdev-dev libudev-dev
           build: cargo build --verbose --features x11
           test: cargo test --verbose --features=serialize,x11
+          clippy: cargo clippy --features x11,serialize --verbose -- -Dwarnings
         - variant: ubuntu-wayland-latest
           os: ubuntu-latest
           headless: weston --no-config --socket=wl-test-env --backend=headless &
           dependencies: |
-            sudo apt-get install libxtst-dev libevdev-dev libudev-dev libinput-dev libxkbcommon-dev weston --assume-yes
+            sudo apt-get update -qq && sudo apt-get install -y --no-install-recommends libxtst-dev libevdev-dev libudev-dev libinput-dev libxkbcommon-dev weston
             sudo chown root:input /dev/uinput
             sudo chmod g+rw /dev/uinput
             id -a
@@ -36,19 +37,21 @@ jobs:
             echo 'KERNEL=="uinput", MODE="0660", GROUP="input", TAG+="uaccess"' | sudo tee /etc/udev/rules.d/99-uinput.rules
             sudo udevadm control --reload-rules
             sudo udevadm trigger --attr-match=name="uinput"
-
           build: cargo build --verbose --features wayland
           # Keyboard not implemented in wayland
-          test: WAYLAND_DISPLAY=wl-test-env cargo test --verbose --no-default-features --features=serialize,wayland -- --skip test_grab --skip test_listen_and_simulate 
+          test: WAYLAND_DISPLAY=wl-test-env cargo test --verbose --no-default-features --features=serialize,wayland -- --skip test_grab --skip test_listen_and_simulate
+          clippy: cargo clippy --features wayland,serialize --verbose -- -Dwarnings
         - variant: macos-latest
           os: macos-latest
           build: cargo build --verbose
           # TODO: We can't test this on github, we can't set accessibility yet.
           test: cargo test --verbose --all-features -- --skip test_listen_and_simulate --skip test_grab
+          clippy: cargo clippy --all-features --verbose -- -Dwarnings
         - variant: windows-latest
           os: windows-latest
           build: cargo build --verbose
           test: cargo test --verbose --features serialize
+          clippy: cargo clippy --features serialize --verbose -- -Dwarnings
 
     steps:
     - uses: actions/checkout@v4
@@ -69,4 +72,4 @@ jobs:
     - name: Linter
       run: |
         rustup component add clippy
-        cargo clippy --all-features --verbose -- -Dwarnings
+        ${{ matrix.clippy }}
