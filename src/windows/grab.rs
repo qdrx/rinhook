@@ -24,14 +24,14 @@ unsafe extern "system" fn raw_callback(code: i32, param: usize, lpdata: isize) -
                     name,
                 };
                 let ptr = &raw mut GLOBAL_CALLBACK;
-                if let Some(callback) = &mut *ptr {
-                    if callback(event).is_none() {
-                        // https://stackoverflow.com/questions/42756284/blocking-windows-mouse-click-using-setwindowshookex
-                        // https://android.developreference.com/article/14560004/Blocking+windows+mouse+click+using+SetWindowsHookEx()
-                        // https://cboard.cprogramming.com/windows-programming/99678-setwindowshookex-wm_keyboard_ll.html
-                        // let _result = CallNextHookEx(HOOK, code, param, lpdata);
-                        return 1;
-                    }
+                if let Some(callback) = &mut *ptr
+                    && callback(event).is_none()
+                {
+                    // https://stackoverflow.com/questions/42756284/blocking-windows-mouse-click-using-setwindowshookex
+                    // https://android.developreference.com/article/14560004/Blocking+windows+mouse+click+using+SetWindowsHookEx()
+                    // https://cboard.cprogramming.com/windows-programming/99678-setwindowshookex-wm_keyboard_ll.html
+                    // let _result = CallNextHookEx(HOOK, code, param, lpdata);
+                    return 1;
                 }
             }
         }
