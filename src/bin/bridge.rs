@@ -121,15 +121,14 @@ fn main() {
 
     let _ = std::fs::remove_file(&sock);
 
-    let listener = UnixListener::bind(&sock)
-        .unwrap_or_else(|e| panic!("Failed to bind {sock}: {e}"));
+    let listener =
+        UnixListener::bind(&sock).unwrap_or_else(|e| panic!("Failed to bind {sock}: {e}"));
 
     // World-readable so any user in the session can connect.
     std::fs::set_permissions(&sock, std::fs::Permissions::from_mode(0o666))
         .expect("Failed to set socket permissions");
 
-    let clients: Arc<Mutex<Vec<std::os::unix::net::UnixStream>>> =
-        Arc::new(Mutex::new(Vec::new()));
+    let clients: Arc<Mutex<Vec<std::os::unix::net::UnixStream>>> = Arc::new(Mutex::new(Vec::new()));
 
     let accept_clients = clients.clone();
     std::thread::spawn(move || {

@@ -40,9 +40,7 @@ fn now_ms() -> f64 {
         .unwrap_or(0.0)
 }
 
-fn build_js_event(
-    ctx: ThreadSafeCallContext<InputEvent>,
-) -> Result<Vec<napi::JsUnknown>> {
+fn build_js_event(ctx: ThreadSafeCallContext<InputEvent>) -> Result<Vec<napi::JsUnknown>> {
     let env = ctx.env;
     let ev = ctx.value;
     let mut obj = env.create_object()?;
@@ -187,8 +185,8 @@ fn socket_listener(
     use std::os::unix::net::UnixStream;
     use std::time::Duration;
 
-    let socket_path = std::env::var("RINHOOK_SOCKET")
-        .unwrap_or_else(|_| "/run/rinhook.sock".to_string());
+    let socket_path =
+        std::env::var("RINHOOK_SOCKET").unwrap_or_else(|_| "/run/rinhook.sock".to_string());
 
     // Retry connecting until the bridge is available or we're asked to stop.
     let mut stream = loop {
