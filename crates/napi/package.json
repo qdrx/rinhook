@@ -1,0 +1,40 @@
+{
+  "name": "rinhook",
+  "version": "0.1.0",
+  "description": "Cross-platform global input event listener for Electron (rdev-based)",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/qdrx/rinhook"
+  },
+  "scripts": {
+    "artifacts": "napi artifacts",
+    "build": "napi build --platform --release",
+    "build:debug": "napi build --platform",
+    "prepublishOnly": "napi prepublish -t npm",
+    "version": "napi version"
+  },
+  "napi": {
+    "name": "rinhook",
+    "triples": {
+      "defaults": false,
+      "additional": [
+        "x86_64-pc-windows-msvc",
+        "x86_64-unknown-linux-gnu",
+        "x86_64-apple-darwin",
+        "aarch64-apple-darwin"
+      ]
+    }
+  },
+  "devDependencies": {
+    "@napi-rs/cli": "^2.18.0"
+  },
+  "optionalDependencies": {
+    "rinhook-linux-x64-gnu": "0.1.0",
+    "rinhook-win32-x64-msvc": "0.1.0",
+    "rinhook-darwin-x64": "0.1.0",
+    "rinhook-darwin-arm64": "0.1.0"
+  }
+}

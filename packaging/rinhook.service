@@ -1,0 +1,22 @@
+# systemd USER unit — install to ~/.config/systemd/user/rinhook.service
+# Enable with: systemctl --user enable --now rinhook
+#
+# %t  = $XDG_RUNTIME_DIR  (e.g. /run/user/1000)
+# No root required once the user is in the 'input' group.
+
+[Unit]
+Description=rinhook input event bridge
+Documentation=https://github.com/qdrx/rinhook
+After=default.target
+
+[Service]
+Type=simple
+Environment=RINHOOK_SOCKET=%t/rinhook.sock
+ExecStart=%h/.local/bin/rinhook-bridge
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=default.target

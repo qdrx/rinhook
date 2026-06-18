@@ -1,0 +1,25 @@
+[package]
+name = "rinhook"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+napi = { version = "2", features = ["napi4"] }
+napi-derive = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# On Linux, use the x11 backend for direct listening (non-Wayland sessions).
+# Wayland sessions use the bridge socket instead — no rdev needed at that path,
+# but the binary must still link against rdev for the x11 path.
+[target.'cfg(all(target_family = "unix", not(target_os = "macos")))'.dependencies]
+rdev = { path = "../..", features = ["x11"] }
+
+[target.'cfg(any(target_os = "macos", target_os = "windows"))'.dependencies]
+rdev = { path = "../.." }
+
+[build-dependencies]
+napi-build = "2"
