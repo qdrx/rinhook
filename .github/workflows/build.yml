@@ -17,9 +17,6 @@ jobs:
           - os: ubuntu-latest
             target: x86_64-unknown-linux-gnu
             node: '20'
-          - os: macos-13
-            target: x86_64-apple-darwin
-            node: '20'
           - os: macos-latest
             target: aarch64-apple-darwin
             node: '20'
@@ -71,10 +68,9 @@ jobs:
             target: x86_64-unknown-linux-gnu
             artifact: rinhook-bridge-linux-x86_64
             build_tool: cargo
-          - os: ubuntu-latest
+          - os: ubuntu-24.04-arm
             target: aarch64-unknown-linux-gnu
             artifact: rinhook-bridge-linux-aarch64
-            build_tool: cross
 
     runs-on: ${{ matrix.os }}
     steps:
@@ -84,23 +80,15 @@ jobs:
         with:
           targets: ${{ matrix.target }}
 
-      # cross handles its own sysroot via Docker; cargo needs host headers.
-      - name: Install libinput / udev headers (x86_64)
-        if: matrix.build_tool == 'cargo'
+      - name: Install libinput / udev headers
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y --no-install-recommends \
             libinput-dev libudev-dev libxkbcommon-dev
 
-      - name: Install cross
-        if: matrix.build_tool == 'cross'
-        uses: taiki-e/install-action@v2
-        with:
-          tool: cross
-
       - name: Build bridge
         run: |
-          ${{ matrix.build_tool }} build --release \
+          cargo build --release \
             --target ${{ matrix.target }} \
             --features bridge \
             --bin rinhook-bridge
