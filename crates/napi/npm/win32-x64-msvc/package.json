@@ -1,6 +1,6 @@
 {
   "name": "@qdrx/rinhook-win32-x64-msvc",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "rinhook native addon — win32 x64 msvc",
   "os": ["win32"],
   "cpu": ["x64"],

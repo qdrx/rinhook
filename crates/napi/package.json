@@ -1,6 +1,6 @@
 {
   "name": "@qdrx/rinhook",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Cross-platform global input event listener for Electron (rdev-based)",
   "main": "index.js",
   "types": "index.d.ts",
@@ -31,8 +31,8 @@
     "@napi-rs/cli": "^2.18.0"
   },
   "optionalDependencies": {
-    "@qdrx/rinhook-linux-x64-gnu": "0.1.1",
-    "@qdrx/rinhook-win32-x64-msvc": "0.1.1",
-    "@qdrx/rinhook-darwin-arm64": "0.1.1"
+    "@qdrx/rinhook-linux-x64-gnu": "0.1.2",
+    "@qdrx/rinhook-win32-x64-msvc": "0.1.2",
+    "@qdrx/rinhook-darwin-arm64": "0.1.2"
   }
 }
