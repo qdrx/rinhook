@@ -162,7 +162,7 @@ fn is_wayland() -> bool {
 // ── listener threads ──────────────────────────────────────────────────────────
 
 fn rdev_listener(
-    tsfn: ThreadsafeFunction<InputEvent, ErrorStrategy::CalleeHandled>,
+    tsfn: ThreadsafeFunction<InputEvent, ErrorStrategy::Fatal>,
     stop: Arc<AtomicBool>,
 ) {
     rdev::listen(move |event| {
@@ -170,7 +170,7 @@ fn rdev_listener(
             return;
         }
         if let Some(ev) = convert_rdev(event) {
-            tsfn.call(Ok(ev), ThreadsafeFunctionCallMode::NonBlocking);
+            tsfn.call(ev, ThreadsafeFunctionCallMode::NonBlocking);
         }
     })
     .ok();
@@ -178,7 +178,7 @@ fn rdev_listener(
 
 #[cfg(all(target_family = "unix", not(target_os = "macos")))]
 fn socket_listener(
-    tsfn: ThreadsafeFunction<InputEvent, ErrorStrategy::CalleeHandled>,
+    tsfn: ThreadsafeFunction<InputEvent, ErrorStrategy::Fatal>,
     stop: Arc<AtomicBool>,
 ) {
     use std::io::Read;
@@ -221,7 +221,7 @@ fn socket_listener(
                     buf.drain(..1); // consume the '\n'
                     if let Ok(line) = std::str::from_utf8(&line_bytes) {
                         if let Some(ev) = parse_socket_event(line) {
-                            tsfn.call(Ok(ev), ThreadsafeFunctionCallMode::NonBlocking);
+                            tsfn.call(ev, ThreadsafeFunctionCallMode::NonBlocking);
                         }
                     }
                 }
@@ -287,7 +287,7 @@ pub fn start_listening(callback: JsFunction) -> Result<()> {
     *state = Some(State { stop: stop.clone() });
     drop(state);
 
-    let tsfn: ThreadsafeFunction<InputEvent, ErrorStrategy::CalleeHandled> =
+    let tsfn: ThreadsafeFunction<InputEvent, ErrorStrategy::Fatal> =
         callback.create_threadsafe_function(0, build_js_event)?;
 
     #[cfg(all(target_family = "unix", not(target_os = "macos")))]
