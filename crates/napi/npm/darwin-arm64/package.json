@@ -1,5 +1,5 @@
 {
-  "name": "rinhook-darwin-arm64",
+  "name": "@qdrx/rinhook-darwin-arm64",
   "version": "0.1.0",
   "description": "rinhook native addon — darwin arm64",
   "os": ["darwin"],

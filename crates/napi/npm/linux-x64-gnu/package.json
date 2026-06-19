@@ -1,5 +1,5 @@
 {
-  "name": "rinhook-linux-x64-gnu",
+  "name": "@qdrx/rinhook-linux-x64-gnu",
   "version": "0.1.0",
   "description": "rinhook native addon — linux x64 gnu",
   "os": ["linux"],

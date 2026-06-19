@@ -27,7 +27,7 @@ switch (platform) {
       if (existsSync(join(__dirname, 'rinhook.win32-x64-msvc.node'))) {
         nativeBinding = require('./rinhook.win32-x64-msvc.node')
       } else {
-        nativeBinding = require('rinhook-win32-x64-msvc')
+        nativeBinding = require('@qdrx/rinhook-win32-x64-msvc')
       }
     } catch (e) {
       loadError = e
@@ -35,28 +35,17 @@ switch (platform) {
     break
 
   case 'darwin':
-    if (arch === 'x64') {
-      try {
-        if (existsSync(join(__dirname, 'rinhook.darwin-x64.node'))) {
-          nativeBinding = require('./rinhook.darwin-x64.node')
-        } else {
-          nativeBinding = require('rinhook-darwin-x64')
-        }
-      } catch (e) {
-        loadError = e
-      }
-    } else if (arch === 'arm64') {
-      try {
-        if (existsSync(join(__dirname, 'rinhook.darwin-arm64.node'))) {
-          nativeBinding = require('./rinhook.darwin-arm64.node')
-        } else {
-          nativeBinding = require('rinhook-darwin-arm64')
-        }
-      } catch (e) {
-        loadError = e
-      }
-    } else {
+    if (arch !== 'arm64') {
       throw new Error(`Unsupported macOS architecture: ${arch}`)
+    }
+    try {
+      if (existsSync(join(__dirname, 'rinhook.darwin-arm64.node'))) {
+        nativeBinding = require('./rinhook.darwin-arm64.node')
+      } else {
+        nativeBinding = require('@qdrx/rinhook-darwin-arm64')
+      }
+    } catch (e) {
+      loadError = e
     }
     break
 
@@ -71,7 +60,7 @@ switch (platform) {
       if (existsSync(join(__dirname, 'rinhook.linux-x64-gnu.node'))) {
         nativeBinding = require('./rinhook.linux-x64-gnu.node')
       } else {
-        nativeBinding = require('rinhook-linux-x64-gnu')
+        nativeBinding = require('@qdrx/rinhook-linux-x64-gnu')
       }
     } catch (e) {
       loadError = e
