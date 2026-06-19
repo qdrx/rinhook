@@ -66,6 +66,15 @@ journalctl --user -u rinhook -f
 
 The socket path can be overridden via `RINHOOK_SOCKET` env var (useful for testing).
 
+## Privacy
+
+rinhook is not a keylogger:
+
+- **Key names are never transmitted** — events stay on the local Unix socket between the bridge and your app
+- **No network access** — the bridge binary runs with `PrivateNetwork=true` in systemd, so the kernel isolates it in a separate network namespace with no internet access
+- **Open source** — audit it yourself: [`src/`](src/), [`crates/`](crates/)
+- **Privacy mode** _(planned)_ — opt-in mode that strips key identities from events entirely, emitting only timing/type metadata
+
 ## Building from source
 
 ```bash
