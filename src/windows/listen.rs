@@ -1,5 +1,7 @@
 use crate::rdev::{Event, EventType, ListenError};
-use crate::windows::common::{HOOK, HookError, KEYBOARD, convert, get_is_virtual, set_key_hook, set_mouse_hook};
+use crate::windows::common::{
+    HOOK, HookError, KEYBOARD, convert, get_is_virtual, set_key_hook, set_mouse_hook,
+};
 use std::os::raw::c_int;
 use std::ptr::null_mut;
 use std::time::SystemTime;
