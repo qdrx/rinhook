@@ -1,5 +1,5 @@
 use crate::rdev::{Event, EventType, GrabError};
-use crate::windows::common::{HOOK, HookError, KEYBOARD, convert, set_key_hook, set_mouse_hook};
+use crate::windows::common::{HOOK, HookError, KEYBOARD, convert, get_is_virtual, set_key_hook, set_mouse_hook};
 use std::ptr::null_mut;
 use std::time::SystemTime;
 use winapi::um::winuser::{CallNextHookEx, GetMessageA, HC_ACTION};
@@ -22,6 +22,7 @@ unsafe extern "system" fn raw_callback(code: i32, param: usize, lpdata: isize) -
                     event_type,
                     time: SystemTime::now(),
                     name,
+                    is_virtual: get_is_virtual(param, lpdata),
                 };
                 let ptr = &raw mut GLOBAL_CALLBACK;
                 if let Some(callback) = &mut *ptr

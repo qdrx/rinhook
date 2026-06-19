@@ -403,6 +403,7 @@ where
             time: SystemTime::now(),
             name,
             event_type,
+            is_virtual: false,
         };
         if callback(rdev_event).is_some() {
             (Some(event), GrabStatus::Continue)

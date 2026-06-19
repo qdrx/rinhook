@@ -61,13 +61,31 @@ fn convert_type(libevent: LibEvent) -> Option<EventType> {
         }
     }
 }
+fn is_virtual_device(libevent: &LibEvent) -> bool {
+    use input::event::EventTrait;
+    let d = match libevent {
+        LibEvent::Keyboard(e) => e.device(),
+        LibEvent::Pointer(PointerEvent::Button(e)) => e.device(),
+        LibEvent::Pointer(PointerEvent::Motion(e)) => e.device(),
+        LibEvent::Pointer(PointerEvent::MotionAbsolute(e)) => e.device(),
+        LibEvent::Pointer(PointerEvent::ScrollWheel(e)) => e.device(),
+        _ => return false,
+    };
+    std::fs::read_link(format!("/sys/class/input/{}", d.sysname()))
+        .ok()
+        .and_then(|p| p.to_str().map(|s| s.contains("/virtual/")))
+        .unwrap_or(false)
+}
+
 fn convert(keyboard: &mut Keyboard, libevent: LibEvent) -> Option<Event> {
+    let is_virtual = is_virtual_device(&libevent);
     let event_type = convert_type(libevent)?;
     let name = keyboard.add(&event_type);
     Some(Event {
         time: SystemTime::now(),
         name,
         event_type,
+        is_virtual,
     })
 }
 

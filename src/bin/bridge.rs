@@ -32,6 +32,8 @@ struct BridgeEvent {
     #[serde(rename = "deltaY", skip_serializing_if = "Option::is_none")]
     delta_y: Option<f64>,
     timestamp: u64,
+    #[serde(rename = "virtual")]
+    is_virtual: bool,
 }
 
 fn now_ms() -> u64 {
@@ -54,8 +56,9 @@ fn button_str(button: Button) -> Option<&'static str> {
     }
 }
 
-fn to_bridge_event(event: &Event) -> Option<BridgeEvent> {
+fn to_bridge_event(event: Event) -> Option<BridgeEvent> {
     let ts = now_ms();
+    let is_virtual = event.is_virtual;
     match event.event_type {
         EventType::KeyPress(key) => Some(BridgeEvent {
             event_type: "KeyDown",
@@ -66,6 +69,7 @@ fn to_bridge_event(event: &Event) -> Option<BridgeEvent> {
             delta_x: None,
             delta_y: None,
             timestamp: ts,
+            is_virtual,
         }),
         EventType::KeyRelease(key) => Some(BridgeEvent {
             event_type: "KeyUp",
@@ -76,6 +80,7 @@ fn to_bridge_event(event: &Event) -> Option<BridgeEvent> {
             delta_x: None,
             delta_y: None,
             timestamp: ts,
+            is_virtual,
         }),
         EventType::ButtonPress(btn) => button_str(btn).map(|b| BridgeEvent {
             event_type: "MouseDown",
@@ -86,6 +91,7 @@ fn to_bridge_event(event: &Event) -> Option<BridgeEvent> {
             delta_x: None,
             delta_y: None,
             timestamp: ts,
+            is_virtual,
         }),
         EventType::ButtonRelease(btn) => button_str(btn).map(|b| BridgeEvent {
             event_type: "MouseUp",
@@ -96,6 +102,7 @@ fn to_bridge_event(event: &Event) -> Option<BridgeEvent> {
             delta_x: None,
             delta_y: None,
             timestamp: ts,
+            is_virtual,
         }),
         EventType::MouseMove { x, y } => Some(BridgeEvent {
             event_type: "MouseMove",
@@ -106,6 +113,7 @@ fn to_bridge_event(event: &Event) -> Option<BridgeEvent> {
             delta_x: None,
             delta_y: None,
             timestamp: ts,
+            is_virtual,
         }),
         EventType::Wheel { delta_x, delta_y } => Some(BridgeEvent {
             event_type: "Wheel",
@@ -116,6 +124,7 @@ fn to_bridge_event(event: &Event) -> Option<BridgeEvent> {
             delta_x: Some(delta_x as f64),
             delta_y: Some(delta_y as f64),
             timestamp: ts,
+            is_virtual,
         }),
     }
 }
@@ -150,7 +159,7 @@ fn main() {
     eprintln!("rinhook-bridge: listening on {sock}");
 
     listen(move |event| {
-        let Some(bridge_event) = to_bridge_event(&event) else {
+        let Some(bridge_event) = to_bridge_event(event) else {
             return;
         };
         let Ok(mut line) = serde_json::to_string(&bridge_event) else {

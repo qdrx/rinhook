@@ -21,6 +21,7 @@ struct InputEvent {
     delta_x: Option<f64>,
     delta_y: Option<f64>,
     timestamp: f64,
+    is_virtual: bool,
 }
 
 // ── global listener state ─────────────────────────────────────────────────────
@@ -64,6 +65,7 @@ fn build_js_event(ctx: ThreadSafeCallContext<InputEvent>) -> Result<Vec<napi::Js
         obj.set_named_property("deltaY", env.create_double(dy)?)?;
     }
     obj.set_named_property("timestamp", env.create_double(ev.timestamp)?)?;
+    obj.set_named_property("virtual", env.get_boolean(ev.is_virtual)?)?;
     Ok(vec![obj.into_unknown()])
 }
 
@@ -71,6 +73,7 @@ fn build_js_event(ctx: ThreadSafeCallContext<InputEvent>) -> Result<Vec<napi::Js
 
 fn convert_rdev(event: rdev::Event) -> Option<InputEvent> {
     let ts = now_ms();
+    let is_virtual = event.is_virtual;
     match event.event_type {
         rdev::EventType::KeyPress(key) => Some(InputEvent {
             event_type: "KeyDown".into(),
@@ -81,6 +84,7 @@ fn convert_rdev(event: rdev::Event) -> Option<InputEvent> {
             delta_x: None,
             delta_y: None,
             timestamp: ts,
+            is_virtual,
         }),
         rdev::EventType::KeyRelease(key) => Some(InputEvent {
             event_type: "KeyUp".into(),
@@ -91,6 +95,7 @@ fn convert_rdev(event: rdev::Event) -> Option<InputEvent> {
             delta_x: None,
             delta_y: None,
             timestamp: ts,
+            is_virtual,
         }),
         rdev::EventType::ButtonPress(btn) => {
             let button = btn_name(btn)?;
@@ -103,6 +108,7 @@ fn convert_rdev(event: rdev::Event) -> Option<InputEvent> {
                 delta_x: None,
                 delta_y: None,
                 timestamp: ts,
+                is_virtual,
             })
         }
         rdev::EventType::ButtonRelease(btn) => {
@@ -116,6 +122,7 @@ fn convert_rdev(event: rdev::Event) -> Option<InputEvent> {
                 delta_x: None,
                 delta_y: None,
                 timestamp: ts,
+                is_virtual,
             })
         }
         rdev::EventType::MouseMove { x, y } => Some(InputEvent {
@@ -127,6 +134,7 @@ fn convert_rdev(event: rdev::Event) -> Option<InputEvent> {
             delta_x: None,
             delta_y: None,
             timestamp: ts,
+            is_virtual,
         }),
         rdev::EventType::Wheel { delta_x, delta_y } => Some(InputEvent {
             event_type: "Wheel".into(),
@@ -137,6 +145,7 @@ fn convert_rdev(event: rdev::Event) -> Option<InputEvent> {
             delta_x: Some(delta_x as f64),
             delta_y: Some(delta_y as f64),
             timestamp: ts,
+            is_virtual,
         }),
     }
 }
@@ -257,6 +266,8 @@ fn parse_socket_event(line: &str) -> Option<InputEvent> {
         #[serde(rename = "deltaY")]
         delta_y: Option<f64>,
         timestamp: f64,
+        #[serde(rename = "virtual", default)]
+        is_virtual: bool,
     }
     let se: SocketEvent = serde_json::from_str(line).ok()?;
     Some(InputEvent {
@@ -268,6 +279,7 @@ fn parse_socket_event(line: &str) -> Option<InputEvent> {
         delta_x: se.delta_x,
         delta_y: se.delta_y,
         timestamp: se.timestamp,
+        is_virtual: se.is_virtual,
     })
 }
 

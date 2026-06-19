@@ -111,6 +111,21 @@ pub unsafe fn convert(param: WPARAM, lpdata: LPARAM) -> Option<EventType> {
     }
 }
 
+pub unsafe fn get_is_virtual(param: WPARAM, lpdata: LPARAM) -> bool {
+    unsafe {
+        match param.try_into() {
+            Ok(WM_KEYDOWN) | Ok(WM_KEYUP) | Ok(WM_SYSKEYDOWN) | Ok(WM_SYSKEYUP) => {
+                let kb = &*(lpdata as *const KBDLLHOOKSTRUCT);
+                (kb.flags & 0x10) != 0 // LLKHF_INJECTED
+            }
+            _ => {
+                let mouse = &*(lpdata as *const MSLLHOOKSTRUCT);
+                (mouse.flags & 0x01) != 0 // LLMHF_INJECTED
+            }
+        }
+    }
+}
+
 type RawCallback = unsafe extern "system" fn(code: c_int, param: WPARAM, lpdata: LPARAM) -> LRESULT;
 pub enum HookError {
     Mouse(DWORD),

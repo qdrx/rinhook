@@ -188,10 +188,15 @@ pub unsafe fn convert(
                 }
                 _ => None,
             };
+            let is_virtual = CGEvent::integer_value_field(
+                Some(cg_event.as_ref()),
+                CGEventField(60), // kCGEventSourceStateID
+            ) != 1; // kCGEventSourceStateHIDSystemState == 1
             return Some(Event {
                 event_type,
                 time: SystemTime::now(),
                 name,
+                is_virtual,
             });
         }
     }
