@@ -1,0 +1,14 @@
+{
+  "name": "rinhook-linux-x64-gnu",
+  "version": "0.1.0",
+  "description": "rinhook native addon — linux x64 gnu",
+  "os": ["linux"],
+  "cpu": ["x64"],
+  "main": "rinhook.linux-x64-gnu.node",
+  "files": ["rinhook.linux-x64-gnu.node"],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/qdrx/rinhook"
+  }
+}

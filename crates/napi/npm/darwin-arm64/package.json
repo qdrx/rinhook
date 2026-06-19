@@ -1,0 +1,14 @@
+{
+  "name": "rinhook-darwin-arm64",
+  "version": "0.1.0",
+  "description": "rinhook native addon — darwin arm64",
+  "os": ["darwin"],
+  "cpu": ["arm64"],
+  "main": "rinhook.darwin-arm64.node",
+  "files": ["rinhook.darwin-arm64.node"],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/qdrx/rinhook"
+  }
+}
