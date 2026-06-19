@@ -6,6 +6,7 @@ fn main() {
         event_type: EventType::KeyPress(Key::KeyS),
         time: SystemTime::now(),
         name: Some(String::from("S")),
+        is_virtual: false,
     };
 
     let serialized = serde_json::to_string(&event).unwrap();
