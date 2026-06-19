@@ -1,5 +1,5 @@
 [![Build](https://github.com/qdrx/rinhook/actions/workflows/build.yml/badge.svg)](https://github.com/qdrx/rinhook/actions/workflows/build.yml)
-[![npm](https://img.shields.io/npm/v/rinhook)](https://www.npmjs.com/package/rinhook)
+[![npm](https://img.shields.io/npm/v/rinhook)](https://www.npmjs.com/package/@qdrx/rinhook)
 
 # rinhook
 
